@@ -42,13 +42,19 @@ All colors MUST be HSL.
     --gradient-primary: linear-gradient(135deg, hsl(215 85% 25%), hsl(215 75% 35%));
     --gradient-accent: linear-gradient(135deg, hsl(185 75% 45%), hsl(185 85% 55%));
     --gradient-hero: linear-gradient(180deg, hsl(210 20% 98%), hsl(210 25% 95%));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(215 85% 25% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(185 75% 45% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(185 85% 55% / 0.1) 0px, transparent 50%);
     
     --shadow-sm: 0 2px 8px hsl(215 25% 15% / 0.05);
     --shadow-md: 0 4px 16px hsl(215 25% 15% / 0.08);
     --shadow-lg: 0 8px 32px hsl(215 25% 15% / 0.12);
+    --shadow-glow: 0 0 40px hsl(185 75% 45% / 0.3), 0 0 80px hsl(185 75% 45% / 0.15);
+    --shadow-glow-primary: 0 0 30px hsl(215 85% 25% / 0.4), 0 0 60px hsl(215 85% 25% / 0.2);
     
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
+    --transition-smooth: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -99,10 +105,15 @@ All colors MUST be HSL.
     --gradient-primary: linear-gradient(135deg, hsl(215 85% 30%), hsl(215 75% 40%));
     --gradient-accent: linear-gradient(135deg, hsl(185 75% 50%), hsl(185 85% 60%));
     --gradient-hero: linear-gradient(180deg, hsl(215 30% 8%), hsl(215 25% 12%));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(215 85% 30% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(185 75% 50% / 0.2) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(185 85% 60% / 0.15) 0px, transparent 50%);
     
     --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.3);
     --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.4);
     --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(185 75% 50% / 0.4), 0 0 80px hsl(185 75% 50% / 0.2);
+    --shadow-glow-primary: 0 0 30px hsl(215 85% 30% / 0.5), 0 0 60px hsl(215 85% 30% / 0.25);
   }
 }
 
@@ -133,6 +144,10 @@ All colors MUST be HSL.
     background: var(--gradient-hero);
   }
   
+  .gradient-mesh {
+    background: var(--gradient-mesh);
+  }
+  
   .shadow-custom-sm {
     box-shadow: var(--shadow-sm);
   }
@@ -145,11 +160,35 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-lg);
   }
   
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-glow-primary {
+    box-shadow: var(--shadow-glow-primary);
+  }
+  
   .transition-base {
     transition: var(--transition-base);
   }
   
   .transition-fast {
     transition: var(--transition-fast);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .glass {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+  
+  .glass-strong {
+    background: hsl(var(--card) / 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
 }
