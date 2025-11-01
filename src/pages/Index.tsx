@@ -45,9 +45,11 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-fast" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/5">
-              View Documentation
-            </Button>
+            <Link to="/documentation">
+              <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/5">
+                View Documentation
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -174,9 +176,9 @@ const Index = () => {
             <div>
               <h5 className="font-semibold text-foreground mb-4">Resources</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-fast flex items-center gap-2">
+                <li><Link to="/documentation" className="hover:text-foreground transition-fast flex items-center gap-2">
                   <FileText className="h-4 w-4" /> Documentation
-                </a></li>
+                </Link></li>
                 <li><a href="#" className="hover:text-foreground transition-fast flex items-center gap-2">
                   <Github className="h-4 w-4" /> GitHub
                 </a></li>
