@@ -1,11 +1,13 @@
+import pako from "pako"
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Upload, PlayCircle, FileText, ChevronLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 import { toast } from "sonner";
+import axios from "axios"
 
 const Simulation = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -17,55 +19,78 @@ const Simulation = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.name.endsWith('.npy')) {
+      if (selectedFile.name.endsWith('.pt')) {
         setFile(selectedFile);
         toast.success("File uploaded successfully");
       } else {
-        toast.error("Please upload a .npy file");
+        toast.error("Please upload a .pt file");
       }
     }
   };
 
-  const handleSubmit = () => {
-    if (!file) {
-      toast.error("Please upload a boundary conditions file");
-      return;
-    }
-    if (!equation) {
-      toast.error("Please select an equation");
-      return;
-    }
+const handleSubmit = async () => {
+  if (!file) {
+    toast.error("Please upload a boundary conditions file");
+    return;
+  }
+  if (!equation) {
+    toast.error("Please select an equation");
+    return;
+  }
 
-    setIsRunning(true);
-    setProgress(0);
-    setResultImages([]);
+  setIsRunning(true);
+  setProgress(0);
+  setResultImages([]);
+  const interval = setInterval(() => {
+    setProgress((prev) => (prev >= 90 ? 90 : prev + 10));
+  }, 500);
 
-    // Simulate progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsRunning(false);
-          
-          // TODO: Replace with actual backend API call
-          // Example: fetch('/api/simulate', { method: 'POST', body: formData })
-          //   .then(res => res.json())
-          //   .then(data => setResultImages(data.images))
-          
-          // Mock result images for demonstration
-          setResultImages([
-            'https://via.placeholder.com/800x600/1a1f35/3b82f6?text=Velocity+Field',
-            'https://via.placeholder.com/800x600/1a1f35/14b8a6?text=Pressure+Distribution',
-            'https://via.placeholder.com/800x600/1a1f35/8b5cf6?text=Streamlines'
-          ]);
-          
-          toast.success("Simulation completed successfully!");
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 500);
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const base64Data = reader.result?.toString().split(",")[1]; // remove prefix
+
+      const payload = {
+        eqn: equation,
+        filename: file.name,
+        file: base64Data,
+      };
+      console.log(payload);
+      const response = await axios.post(
+        "http://172.20.93.111:8000/predict",
+        payload,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      clearInterval(interval);
+      setProgress(100);
+      setIsRunning(false);
+
+      if (response.data?.data?.image) {
+        setResultImages([response.data.data.image]);
+        toast.success("Simulation completed successfully!");
+      } else {
+        toast.error("Unexpected server response");
+      }
+    } catch (error: any) {
+      console.error("Simulation error:", error);
+      clearInterval(interval);
+      setIsRunning(false);
+      toast.error(error.response?.data?.message || "Simulation failed");
+    }
   };
+
+  reader.onerror = () => {
+    clearInterval(interval);
+    setIsRunning(false);
+    toast.error("Failed to read the file");
+  };
+
+  // Start reading file
+  reader.readAsDataURL(file);
+};
+
+
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -100,12 +125,12 @@ const Simulation = () => {
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-3">
                   Initial Boundary Conditions
-                  <span className="text-muted-foreground font-normal ml-2">(NumPy .npy file)</span>
+                  <span className="text-muted-foreground font-normal ml-2">(pytorch tensor file .pt file)</span>
                 </label>
                 <div className="relative">
                   <input
                     type="file"
-                    accept=".npy"
+                    accept=".pt"
                     onChange={handleFileChange}
                     className="hidden"
                     id="file-upload"
@@ -124,7 +149,7 @@ const Simulation = () => {
                       ) : (
                         <>
                           <p className="text-foreground font-medium">Click to upload or drag and drop</p>
-                          <p className="text-sm text-muted-foreground">NumPy array file (.npy)</p>
+                          <p className="text-sm text-muted-foreground">Pytorch tensor file for boundary condition (.pt)</p>
                         </>
                       )}
                     </div>
