@@ -66,8 +66,9 @@ const handleSubmit = async () => {
       setProgress(100);
       setIsRunning(false);
 
-      if (response.data?.data?.image) {
-        setResultImages([response.data.data.image]);
+      console.log(response.data.output_urls);        
+      if (response.data.output_urls) {
+        setResultImages(response.data.output_urls);
         toast.success("Simulation completed successfully!");
       } else {
         toast.error("Unexpected server response");
@@ -218,8 +219,10 @@ const handleSubmit = async () => {
               <h3 className="text-2xl font-bold text-foreground mb-6">Simulation Results</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 {resultImages.map((imageUrl, index) => (
+                  
                   <div key={index} className="rounded-lg overflow-hidden border border-border bg-muted/30">
                     <img 
+                      key={index}
                       src={imageUrl} 
                       alt={`Simulation result ${index + 1}`}
                       className="w-full h-auto"
