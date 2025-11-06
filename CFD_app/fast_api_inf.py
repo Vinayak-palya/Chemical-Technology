@@ -14,9 +14,9 @@ import numpy as np
 import matplotlib.cm as cm
 
 cloudinary.config(
-    cloud_name="dvvp0fwq5",
-    api_key="768526765851519",
-    api_secret="L464eajMnWimuLi52xgjRlARcRo"
+    cloud_name="YOUR_CLOUD_NAME",
+    api_key="CLOUDINARY_API_KEY",
+    api_secret="API_SECRET"
 )
 
 app = FastAPI(title="CFD Model Inference API")
@@ -242,4 +242,5 @@ async def predict(request: Request):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 # ...existing code...
